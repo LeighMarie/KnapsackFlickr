@@ -189,17 +189,3 @@ $(function() {
     }, 3000);
     
 });
-
-
-    
-    /* THINGS I NEED TO DO IN ORDER OF PRIORITY
-    
-    LOCALSTORAGE() SAVE INTERACTION STATE-- ask wednesday (hard to do with constant prompt unless counter)
-          maybe have button to start over?
-    PIE CHART TRANSITIONS-- ask Philip wednesday
-    MAKE EVERYTHING LARGER
-    
-    
-    DETAILS FROM CODE REVIEW DOCS
-    MORE COMPLICATED ANIMATION
-    */
