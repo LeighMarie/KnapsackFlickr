@@ -1,5 +1,62 @@
 /* Burglar's Dilemma: interactive lesson of Knapsack Problem */
 
+//checks to see how page should be initialized
+//determines if local storage should be used or not
+function pageInitialization(){  
+    var totalWeight = 0;
+    var totalValue = 0;
+    //if not the first time opening page or not following a start-over click
+    if (localStorage.getItem('ifStorage') == 'yes') {   
+        //check if local storage should be restored for each DOM and make sure DOM's properties are correct      
+        var sackData = localStorage.getItem('sack');
+        var houseData = localStorage.getItem('house');
+        var chartData = localStorage.getItem('chart');
+        if (sackData) {
+            $('#sack').html(sackData);
+            $('.item').attr("style","")
+                      .css("display", "inline-block");   
+            //calculate total weight and total value of objects in sack to restore display
+            $.each($('.item img'), function() { 
+                if ($(this).attr("data-location") == "sack") {
+                    totalWeight += parseInt($(this).attr("data-weight"));
+                    totalValue += parseInt($(this).attr("data-value")); 
+                }
+             });
+        }
+        if (houseData) {
+            $('#house').html(houseData);
+            $('.item').attr("style","")
+                      .css("display", "inline-block");   
+        } 
+        if (chartData) {
+            $('#chart').html(chartData);
+        } 
+        $('#weight').html(totalWeight);
+        $('#value').html(totalValue);
+    }
+    //first time loading page or following a start-over click
+    else {
+            //prompt users to choose what they would like to steal
+            var chosenItem = prompt("Please enter what you would like to steal: ","default");
+            if (chosenItem != null) {
+               loadItems(chosenItem); }  
+    }
+    //to be used in main function
+    return[totalWeight, totalValue];
+};
+
+//updates the local storage of all the html on the page that may be changed
+function updateLocalStorage() {
+    function saveElement(object) {
+        //save the object id's html
+        var objectHTML = $('#'+object).html();
+        localStorage.setItem(object, objectHTML);
+    };
+    saveElement("sack");
+    saveElement("house");
+    saveElement("chart");
+};
+
 //if in "house" itemBox (left), move to "sack" itemBox (right) and vice versa
 function moveItem(item) { 
     if (item.attr("data-location") == "house") {
@@ -71,7 +128,7 @@ function updatePieChart(totalWeight){
             .attr("class", "arc")
             .attr("transform", "translate(" + outerRadius + ", " + outerRadius + ")");
     
-    //Draw arc paths
+    //draw arc paths
     arcs.append("path")
         .attr("fill", function(d, i) {
             return color(i);
@@ -110,18 +167,22 @@ function loadItems(item) {
   });
     
   promise.done(function(data) {
+      //already supplied weights and values
       var weights=["10", "9", "4", "2", "1", "20"];
       var values=["175", "90", "20", "50", "10", "200"];
+      //loop through first six image results
       for (var i = 0; i < 6; i++) {
       var imgLink = data.items[i].media.m;
       //appended images to already existing divs 
-      var newImg = $('<img src="' + imgLink + '" data-value= "' + values[i] + '" data-weight= "' + weights[i] +'" />');
+      var newImg = $('<img src="' + imgLink + '" data-value= "' + values[i] + '" data-weight= "' + weights[i] + 
+      '" data-location=   house />');
       var id = i + 1;
       $('#'+id).append(newImg);
       $('#'+id).append("<br> $" + values[i] + ", " + weights[i] + "kg");
       }
   });
     
+  //in case of error    
   promise.fail(function(reason) {
     console.log(reason);
   });
@@ -129,35 +190,36 @@ function loadItems(item) {
 };
  
 
-
 //happens after web page is loaded
 $(function() {
-    var chosenItem = prompt("Please enter what you would like to steal: ","default");
+    //set up page with data possibly from local storage
+    var dataArray = pageInitialization();
+    //if there is local storage (user isn't accessing page for first time and isn't starting over),
+    //there will be no lag from getting flickr pictures, so user can go directly into the main function
+    if (localStorage.getItem('ifStorage') == 'yes') {   
+        mainFunction(); }
+    else {
+        //set flag indicating local storage data to yes
+        localStorage.setItem('ifStorage', 'yes');
+        //wait for images to load from flickr (there is a slight lag time)
+        //if lag time not accounted for, images won't be included in var items below and can't be clicked
+        setTimeout(function(){mainFunction()}, 3000); }
+  
+    function mainFunction() { 
+        //get totalWeight and totalValue possibly from local storage
+        var totalWeight = dataArray[0];
+        var totalValue = dataArray[1];  
+        updateLocalStorage();
+        //burglar on creaky floor noise loops every duration of mp3 file (approx 95 seconds)
+        //from https://www.youtube.com/watch?v=XBSsaK-r9nU
+        var backgroundNoise = new Audio('FloorCreak.mp3');
+        backgroundNoise.play();
+        setInterval(function(){var backgroundNoise = new Audio('FloorCreak.mp3'); backgroundNoise.play();}, 94000);
 
-    if (chosenItem != null)
-      {
-      loadItems(chosenItem);
-      } 
-    
-    //wait for images to load from flickr
-    setTimeout(function(){
-    //burglar on creaky floor noise loops every duration of mp3 file (approx 95 seconds)
-    //from https://www.youtube.com/watch?v=XBSsaK-r9nU
-    var backgroundNoise = new Audio('FloorCreak.mp3');
-    backgroundNoise.play();
-    setInterval(function(){var backgroundNoise = new Audio('FloorCreak.mp3'); backgroundNoise.play();}, 94000);
-    var items = $('.item img');
-    //initialize values
-    items.attr("data-location","house"); 
-        
-    var totalValue = 0;
-    var totalWeight = 0;
-    var items = $('.item img');
-    var sack = $('#sack').html();
-    var house = $('#house').html();
-    
-    //controls movement of the items
-    items.on('click', function(event) {
+        //controls movement of the items when user clicks each item
+        var items = $('.item img');
+        console.log(items);
+        items.on('click', function(event) {
         var target = $(event.target);
         var weight = parseInt(target.attr('data-weight'))
         //can always move item if it's in the "sack" (right) itemBox
@@ -170,7 +232,7 @@ $(function() {
             $('#weight').html(totalWeight);
             $('#value').html(totalValue);
         }
-        
+
         //must check if can add weight from "house" (left) itemBox to "sack" itemBox
         else if (canAddToTotal(weight, totalWeight)) 
         {
@@ -183,9 +245,21 @@ $(function() {
         }
         else{
             tastefulAlert();
-        }            
-    });   
-        
-    }, 3000);
+        }   
+            //update local storage of all changeable html
+            updateLocalStorage();
+        });   
+
+        //when user clicks start-over button
+        var button = $('#startOver');
+        button.on('click', function(event) {
+            var target = $(event.target);
+            //set flag indicating start-over because no local storage data
+            localStorage.setItem('ifStorage', 'no');
+            //reload the page
+            location.reload();
+          });
+
+    };
     
 });
