@@ -159,7 +159,7 @@ function updatePieChart(totalWeight){
 //load items of item type user has chosen to steal from flickr
 function loadItems(item) {
 
-  var url = "http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
+  var url = "//api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
   var data = {
     tags: item,
     tagmode: "any",
