@@ -110,8 +110,8 @@ function updatePieChart(totalWeight){
                         .range(["red", "gray"]);
     
     //set pie chart dimensions
-    var width = 300;
-    var height = 300;
+    var width = 348;
+    var height = 348;
     var outerRadius = width / 2;
     var innerRadius = 0;
     var arc = d3.svg.arc()
