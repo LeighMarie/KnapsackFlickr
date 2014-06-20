@@ -39,14 +39,14 @@
 }
 
 .knapsack .item{
-    margin: 5px;
+    margin: 10px;
     display: inline-block;
     font-size: 10pt;
     text-align: center;
 }
 
 .knapsack .item img{
-     width: 100px;
+     width: 90px;
 }
 
 .knapsack .footer{
