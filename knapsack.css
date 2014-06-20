@@ -3,7 +3,6 @@
     font-size: 17pt;
 }
 
-
 .knapsack .header img{
     vertical-align: middle;
     height: 150px;
@@ -25,7 +24,6 @@
     top: 300px;
     padding-top: 30px;
 }
-
 
 .knapsack .itemBox{
     display: inline-block;
@@ -50,7 +48,6 @@
      width: 80px;
      margin: 10px;
 }
-
 
 .knapsack .footer{
     text-align: center;

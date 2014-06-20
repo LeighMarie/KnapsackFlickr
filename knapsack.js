@@ -1,4 +1,9 @@
-/* Burglar's Dilemma: interactive lesson of Knapsack Problem */
+/* Burglar's Dilemma: interactive lesson of Knapsack Problem 
+Allows users to pick which items they want to steal (images taken from flickr)
+Displays how much of user's knapsack is filled on a neighboring pie chart
+Saves interaction state when user refreshes the page 
+Starts game over (with new items) when user presses a button
+Plays background sounds and other sound effects */
 
 //checks to see how page should be initialized
 //determines if local storage should be used or not
@@ -76,7 +81,7 @@ function moveItem(item) {
 };
 
 
-//check whether totalWeight is still under 20 after new item possibly moved
+//check whether totalWeight is still under maximum weight of knapsack after new item possibly moved
 function canAddToTotal(weight, totalWeight) {
     return (totalWeight + weight <=  parseInt($('.knapsack').attr("data-maxweight")));   
 };
@@ -202,8 +207,8 @@ $(function() {
         //set flag indicating local storage data to yes
         localStorage.setItem('ifStorage', 'yes');
         //wait for images to load from flickr (there is a slight lag time)
-        //if lag time not accounted for, images won't be included in var items below and can't be clicked
-        setTimeout(function(){mainFunction()}, 3000); }
+        //if lag time not accounted for, images won't be included in the variable items below and can't be clicked
+        setTimeout(function(){mainFunction()}, 1500); }
   
     function mainFunction() { 
         //get totalWeight and totalValue possibly from local storage
@@ -218,7 +223,6 @@ $(function() {
 
         //controls movement of the items when user clicks each item
         var items = $('.item img');
-        console.log(items);
         items.on('click', function(event) {
         var target = $(event.target);
         var weight = parseInt(target.attr('data-weight'))
@@ -250,7 +254,7 @@ $(function() {
             updateLocalStorage();
         });   
 
-        //when user clicks start-over button
+        //when user clicks start-over (pick new items) button
         var button = $('#startOver');
         button.on('click', function(event) {
             var target = $(event.target);
